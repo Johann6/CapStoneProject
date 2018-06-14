@@ -13,6 +13,7 @@ from keras.models import Sequential
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_v3 import preprocess_input
 from keras.callbacks import ModelCheckpoint
+from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 import pickle
 from pathlib import Path
@@ -182,11 +183,8 @@ def load_dataset_from_files():
     fobj_train = open(root_dir + dir_train + filename_train, "r")
     fobj_val = open(root_dir + dir_val + filename_val, "r")
 
-###################### TODO: remove!! ####################################
-    #list_of_tuple = [(fobj_train, root_dir+dir_train), (fobj_val, root_dir+dir_val)]
-    list_of_tuple = [(fobj_val, root_dir+dir_val)]
-    
-    
+    list_of_tuple = [(fobj_train, root_dir+dir_train), (fobj_val, root_dir+dir_val)]
+       
     #path_target_tuples = extractUnixPaths(list_of_tuple)
     (face_jpgs_paths, face_targets) = extractUnixPaths(list_of_tuple)
 
@@ -195,8 +193,10 @@ def load_dataset_from_files():
     #face_targets = face_targets[:10]
 
     # TODO: divide by 255? check max values!
+    print("Create Tensor Array.")
     face_tensors = paths_to_tensor(face_jpgs_paths).astype('float32')/255
 
+    print("Normalize Targets.")
     face_targets = normTargets(list(zip(face_jpgs_paths, face_targets)))
 
     showImg(face_jpgs_paths[:10], face_targets[:10], targetDim)
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
     X = bottleneck_features
     y = face_targets
-    X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.33, random_state=42)
+    X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.25, random_state=42)
 
     X_train = np.array(X_train)
     X_valid = np.array(X_valid)
@@ -284,16 +284,19 @@ if __name__ == "__main__":
     InceptionV3_model.summary()
 
 
-
-    InceptionV3_model.compile(loss='mean_squared_error', optimizer='sgd', metrics=['accuracy'])
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    #InceptionV3_model.compile(loss='mean_squared_error', optimizer=adam, metrics=['accuracy'])
+    InceptionV3_model.compile(loss='mse', optimizer=adam)
 
     checkpointer = ModelCheckpoint(filepath='saved_models/weights.best.InceptionV3.hdf5', 
                                verbose=1, save_best_only=True)
 
-    print('Train regression model.')
-    InceptionV3_model.fit(X_train, y_train, 
-              validation_data=(X_valid, y_valid),
-              epochs=5, batch_size=20, callbacks=[checkpointer], verbose=1)
+    trainModel_b = False
+    if trainModel_b:
+        print('Train regression model.')
+        InceptionV3_model.fit(X_train, y_train, 
+                  validation_data=(X_valid, y_valid),
+                  epochs=20, batch_size=20, callbacks=[checkpointer], verbose=1)
 
     InceptionV3_model.load_weights('saved_models/weights.best.InceptionV3.hdf5')
 
@@ -304,10 +307,12 @@ if __name__ == "__main__":
     for index in range(10):
         result = InceptionV3_model.predict(np.expand_dims(bottleneck_features[index], axis=0))
         #result = base_model.predict(np.expand_dims(face_tensors[index], axis=0))
-        predictions.append(result)
+        predictions.append(result[0])
 
 
     showImg(face_jpgs_paths[:10], predictions, targetDim)
+    #showImg(face_jpgs_paths[10:20], face_targets[10:20], targetDim)
+    #showImg(face_jpgs_paths[20:30], face_targets[20:30], targetDim)
 
     plt.show()
 
