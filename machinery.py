@@ -3,10 +3,20 @@ import numpy as np
 import pickle
 import cv2
 import matplotlib.pyplot as plt
+import os
+from pathlib import Path
+
 
 
 from keras.preprocessing import image
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization, Activation
+from keras.layers import Dropout, Flatten, Dense, GlobalAveragePooling2D
+from keras.models import Sequential
+from keras.optimizers import Adam, SGD
 
+from keras_vggface.vggface import VGGFace
+from keras.engine import  Model
+from keras.layers import Input
 
 
 class coordinates:
@@ -151,16 +161,11 @@ def load_dataset_from_files():
     #path_target_tuples = extractUnixPaths(list_of_tuple)
     (face_jpgs_paths, face_targets) = extractUnixPaths(list_of_tuple)
 
-###################### TODO: remove!! ####################################
-    #face_jpgs_paths = face_jpgs_paths[:10]
-    #face_targets = face_targets[:10]
-
-    # TODO: divide by 255? check max values!
-    face_tensors = paths_to_tensor(face_jpgs_paths).astype('float32')/255
-
     face_targets = normTargets(list(zip(face_jpgs_paths, face_targets)))
 
-    showImg(face_jpgs_paths[:10], face_targets[:10], targetDim)
+    #showImg(face_jpgs_paths[:10], face_targets[:10], targetDim)
+
+    face_tensors = paths_to_tensor(face_jpgs_paths)
 
     for tuple in list_of_tuple:
         file = tuple[0]
@@ -198,3 +203,76 @@ def load_dataset():
     assert((face_jpgs_paths.shape[0] == face_tensors.shape[0]) & (face_jpgs_paths.shape[0] == len(face_targets)))
 
     return (face_jpgs_paths, face_tensors, face_targets)
+
+
+def getModel(inputShape):
+#Ideen: BatchNormalization? DropOut? Augmentation of target vec?
+
+    #model = Sequential()
+    #model.add(GlobalAveragePooling2D(input_shape=inputShape))
+    #model.add(Dense(5000, activation='relu'))
+    #model.add(Dense(4))
+    #model.summary()
+
+    #model = Sequential()
+    #model.add(GlobalAveragePooling2D(input_shape=bottleneck_features.shape[1:]))
+    #model.add(Dense(5000))
+    #model.add(BatchNormalization())
+    #model.add(Activation('relu'))
+    #model.add(Dense(4))
+    #model.summary()
+
+    #model = Sequential()
+    #model.add(GlobalAveragePooling2D(input_shape=inputShape))
+    #model.add(Dense(4096, activation='relu'))
+    #model.add(Dense(2048, activation='relu'))
+    #model.add(Dense(1024, activation='relu'))
+    #model.add(Dense(4))
+    #model.summary()
+
+    #model = Sequential()
+    ##model.add(GlobalAveragePooling2D(input_shape=inputShape))
+    ##model.add(Dropout(0.3))
+    #model.add(Dense(4096, input_shape=inputShape))
+    #model.add(BatchNormalization())
+    #model.add(Activation('relu'))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(2048))
+    #model.add(BatchNormalization())
+    #model.add(Activation('relu'))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(1024))
+    #model.add(BatchNormalization())
+    #model.add(Activation('relu'))
+    #model.add(Dense(4))
+    #model.summary()
+
+    model = Sequential()
+    model.add(BatchNormalization(input_shape=inputShape))
+    model.add(MaxPooling2D())
+    model.add(Flatten(name='flatten'))
+    model.add(Dense(2048, name='fc6'))
+    model.add(Activation('relu', name='fc6/relu'))
+    model.add(Dense(1024, name='fc7'))
+    model.add(Activation('relu', name='fc7/relu'))
+    model.add(Dense(4, name='fc8'))
+    model.summary()
+
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    model.compile(loss='mean_squared_error', optimizer=adam)
+
+    return model
+
+
+def getBaseModel():
+    #base_model = InceptionV3(weights='imagenet', include_top=False)
+    #base_model = VGGFace(include_top=False, model='vgg16', input_shape=(224, 224, 3), pooling='max')
+    #base_model = VGGFace(include_top=False, model='vgg16', pooling='avg')
+
+    # Layer Features
+    layer_name = 'pool4'
+    vgg_model = VGGFace(input_shape=(224, 224, 3))
+    out = vgg_model.get_layer(layer_name).output
+    base_model = Model(vgg_model.input, out)
+
+    return base_model
