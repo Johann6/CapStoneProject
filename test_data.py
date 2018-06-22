@@ -10,6 +10,7 @@ import pickle
 import matplotlib.pyplot as plt
 
 
+from keras_vggface.vggface import VGGFace
 from keras.applications.inception_v3 import InceptionV3
 from keras.optimizers import Adam
 from keras.models import Sequential
@@ -28,12 +29,17 @@ if __name__ == "__main__":
 
     face_tensors = machinery.paths_to_tensor(face_jpgs_paths).astype('float32')/255
 
-    if Path(working_dir+"bottleneck_features.p").is_file():
+    #face_tensors = [np.expand_dims(face_tensor.transpose((2,0,1)), axis=0) for face_tensor in face_tensors]
+    #face_tensors = np.vstack(face_tensors)
+
+    if Path(working_dir+"bottleneck_features_testImages.p").is_file():
         print('Load bottleneck features from pickle.')
-        bottleneck_features = pickle.load( open( working_dir+"bottleneck_features.p", "rb" ) )
+        bottleneck_features = pickle.load( open( working_dir+"bottleneck_features_testImages.p", "rb" ) )
     else:
         print('Load InceptionV3 model.')
-        base_model = InceptionV3(weights='imagenet', include_top=False)
+        #base_model = InceptionV3(weights='imagenet', include_top=False)
+        #base_model = VGGFace(include_top=True, model='vgg16', input_shape=(224, 224, 3), pooling='avg')
+        base_model = VGGFace(include_top=True, model='vgg16', pooling='avg')
         #make_keras_picklable()
         ## Save InceptionV3_model into a pickle file.
         #pickle.dump( base_model, open( "InceptionV3_model.p", "wb" ) )
@@ -43,17 +49,10 @@ if __name__ == "__main__":
         bottleneck_features = np.vstack(list_of_features)
         # Save tensors into a pickle file.
         print('Dump bottleneck features.')
-        pickle.dump( bottleneck_features, open(working_dir+"bottleneck_features.p", "wb" ) )
+        pickle.dump( bottleneck_features, open(working_dir+"bottleneck_features_testImages.p", "wb" ) )
 
     print("Create Top model based upon InceptionV3 model.")
-    InceptionV3_model = Sequential()
-    InceptionV3_model.add(GlobalAveragePooling2D(input_shape=bottleneck_features.shape[1:]))
-    InceptionV3_model.add(Dense(5000, activation='relu'))
-    InceptionV3_model.add(Dense(4))
-    InceptionV3_model.summary()
-
-    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    InceptionV3_model.compile(loss='mean_squared_error', optimizer=adam)
+    InceptionV3_model = machinery.getModel(bottleneck_features.shape[1:])
 
     InceptionV3_model.load_weights('saved_models/weights.best.InceptionV3.hdf5')
 
@@ -65,6 +64,8 @@ if __name__ == "__main__":
         result = InceptionV3_model.predict(np.expand_dims(feature, axis=0))
         #result = base_model.predict(np.expand_dims(face_tensors[index], axis=0))
         predictions.append(result[0])
+
+    predictions = np.array(predictions) * targetDim.x
 
     machinery.showImg(face_jpgs_paths, predictions, targetDim)
 
