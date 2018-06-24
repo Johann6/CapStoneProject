@@ -5,18 +5,18 @@ June 24st, 2018
 
 ## Proposal
 _(approx. 2-3 pages)_
-The goal is to design and develop an App in Python that recognizes faces in real time. The App connects to any given camera device and displays the camera's content. Whenever the the current camera image shows one (or multiple) faces they should be highlighted in the shown image. If the App recignizes any of those faces, the person's name should be displayed in the shown image.
+The goal is to design and develop an App in Python that recognizes faces in real time. The App connects to any given camera device and displays the camera's content. Whenever the current camera image shows one (or multiple) faces they should be highlighted in the shown image. If the App recognizes any of those faces, the person's name should be displayed in the shown image.
 
-On user input a new face can be recorded and add to the database in real time. Afterwards the App will be capable of recognizing this face as well.
+On user input a new face can be recorded and added to the database in real time. Afterwards the App will be capable of recognizing the face as well.
 
-The facial images that a similarity vector is calculated upon are saved to a local directory. That way all calculations can be recunstructed.
+The facial images that a similarity vector is calculated upon that is added to the database for recognition purposes are saved to a local directory. That way all calculations can be reconstructed.
 
 ### Domain Background
 _(approx. 1-2 paragraphs)_
 
 In this section, provide brief details on the background information of the domain from which the project is proposed. Historical information relevant to the project should be included. It should be clear how or why a problem in the domain can or should be solved. Related academic research should be appropriately cited in this section, including why that research is relevant. Additionally, a discussion of your personal motivation for investigating a particular problem in the domain is encouraged but not required.
 
-Facial recognition is a a problem out of the context of image processing taht has been dealt with since over 50 years. Pioneers in this field include Woody Bledsoe, Helen Chan Wolf, and Charles Bisson.
+Facial recognition is a a problem in the context of image processing that has been dealt with since over 50 years. Pioneers in this field include Woody Bledsoe, Helen Chan Wolf, and Charles Bisson.
 
 There are competitions meassuring performance of state of the art facaial recognition algorithms like Face Recognition Grand Challenge in 2006 that evaluated performans based on a dataset showing faces with different facial expressions as wells as different lightning conditions and environments.
 
