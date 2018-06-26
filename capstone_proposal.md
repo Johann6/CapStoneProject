@@ -7,9 +7,7 @@ June 24st, 2018
 _(approx. 2-3 pages)_
 The goal is to design and develop an App in Python that recognizes faces in real time. The App connects to any given camera device and displays the camera's content. Whenever the current camera image shows one (or multiple) faces they should be highlighted in the shown image. If the App recognizes any of those faces, the person's name should be displayed in the shown image.
 
-On user input a new face can be recorded and added to the database in real time. Afterwards the App will be capable of recognizing the face as well.
-
-The facial images that a similarity vector is calculated upon that is added to the database for recognition purposes are saved to a local directory. That way all calculations can be reconstructed.
+On user input a new face can be recorded and added to the database in real time. Afterwards the App will be capable of recognizing the face as well. Any image that is recorded during this process is saved to a local directory. 
 
 ### Domain Background
 _(approx. 1-2 paragraphs)_
