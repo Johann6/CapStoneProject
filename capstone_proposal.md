@@ -85,6 +85,7 @@ The problem is solved in Python.
    - Extract facial features using CNN by making predictions upon faces
    - Compare feature vector to feature vectors in local database. Comparism is done based on eucledian distance. If distance is below threashold, a match is detected
    - On user input: record feature vector of new face and add it to the database
+   
    Any of the above steps takes place in real time.
 
 -----------
