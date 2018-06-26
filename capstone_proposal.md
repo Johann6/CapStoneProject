@@ -25,7 +25,7 @@ _(approx. 1 paragraph)_
 
 In this section, clearly describe the problem that is to be solved. The problem described should be well defined and should have at least one relevant potential solution. Additionally, describe the problem thoroughly such that it is clear that the problem is quantifiable (the problem can be expressed in mathematical or logical terms) , measurable (the problem can be measured by some metric and clearly observed), and replicable (the problem can be reproduced and occurs more than once).
 
-The problem to be solved is to locate and recognize faces in any given images. The localization problem will be solved by standard openCV functionality (Haar Feature-based Cascade Classifier for Object Detection) and won't be benchmarked. Any localized face should be successfully classified by the face recognition algorithm. The results are compared to another state of the art face recognition algorithm (which?).
+That problem that is solved by the proposed algorithm is online face recognition. This means that not only known faces may be recognized but also new faces that are added during during runtime of the program. A benchmarking metric for the problem is detection rate of known faces. This could be compared to a state of the art facial classifier (like [https://github.com/rcmalli/keras-vggface]).
 
 ### Datasets and Inputs
 _(approx. 2-3 paragraphs)_
@@ -36,7 +36,7 @@ The problem's solution has numerous inputs:
 
  - VGG Face Dataset [http://www.robots.ox.ac.uk/~vgg/data/vgg_face/] [http://www.robots.ox.ac.uk/%7Evgg/publications/2015/Parkhi15/parkhi15.pdf]: The dataset consists of 2622000 images showing celebreties. It contains 2622 identities with 1000 images for each identity. The dataset is used to train CNN's that are based on ImageNet competition winning architectures (VGG-16, ResNet-50)
  
- - Pretrained VGG Face model [https://github.com/rcmalli/keras-vggface]: The VGG-16 CNN is used as a baseline. A transfer learning approach is applied to it in order to extract the CNN's feature that face recognition is applied upon. The features are further process by proprietary face recognition algorithm.
+ - Pretrained VGG Face model [https://github.com/rcmalli/keras-vggface]: Contains 3 CNN's trained upon VGG Face Datset. 3 ImgageNet Competition winning Architectures are supported (VGG-16, ResNet-50, SeNet-50). A transfer learning approach is applied in order to extract the CNN's feature that face recognition is based upon by removing the classifier. The features are further processed by proprietary face recognition algorithm. ResNet-50 CNN is used for facial feature extraction.
 
  - Haar Feature-based Cascade Classifier for Object Detection (Faces) [https://www.docs.opencv.org/2.4/modules/objdetect/doc/cascade_classification.html]: Used for face localization in order to extract the input to the CNN
 
@@ -48,7 +48,7 @@ In this section, clearly describe a solution to the problem. The solution should
 The solution to the problem is an algorithm that detects faces in given images and matches them to faces contained in a database. Imgaes are input to the algorithm through a connected camera (webcam). The algorithm itsself can be subdivided into the following steps:
 
  1) Face extraction: Any shown faces on the input image are localized (by OpenCV built in face detection), extracted and scaled to a 224x224 jpg.
- 2) Extraction of facial features: All extracted facial images are fed into pretrained VGG-16 CNN. A feature vector is generated.
+ 2) Extraction of facial features: All extracted facial images are fed into pretrained CNN. A feature vector is generated.
  3) Matching feature vectors: The extracted features are compared to any feature vector within a local database. Comparism takes place based on eucledian distance. If a match is detected the respective name is shown.
 
 ### Benchmark Model
@@ -56,7 +56,7 @@ _(approximately 1-2 paragraphs)_
 
 In this section, provide the details for a benchmark model or result that relates to the domain, problem statement, and intended solution. Ideally, the benchmark model or result contextualizes existing methods or known information in the domain and problem given, which could then be objectively compared to the solution. Describe how the benchmark model or result is measurable (can be measured by some metric and clearly observed) with thorough detail.
 
-A Benchmark model is Pretrained VGG Face model [https://github.com/rcmalli/keras-vggface]. Real Time comparism of recorded faces to database content should perform as well as the pretrained CNN. The only difference is that VGG Face uses a pretrained classifier (consisting of fully-connected layers) whereas the proposed algorithm simply comapred facial featrues based on the eucledian distance. The comparisim will only work when comparing people that the CNN is trained upon (thus celebreties contained in the VGG Face database).
+A Benchmark model is Pretrained VGG Face model [https://github.com/rcmalli/keras-vggface]. Real Time comparism of recorded faces to database content should perform as well as the pretrained CNN. The only difference is that VGG Face uses a pretrained classifier (consisting of fully-connected layers) whereas the proposed algorithm matches faces based on facial featrues by calculating the eucledian distance. The comparisim will work when comparing people that the CNN is trained upon (thus celebreties contained in the VGG Face database).
 
 ### Evaluation Metrics
 _(approx. 1-2 paragraphs)_
