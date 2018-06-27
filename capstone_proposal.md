@@ -18,14 +18,22 @@ Facial recognition is a a problem in the context of image processing that has be
 
 There are competitions meassuring performance of state of the art facaial recognition algorithms like Face Recognition Grand Challenge in 2006 that evaluated performans based on a dataset showing faces with different facial expressions as wells as different lightning conditions and environments.
 
-Applications of Facial recognition algorithms are mostly in the domain of security and defence. They include automated passport control at airports, providing a possibility of logging into an account and accessing sensetive data as well as surveillance among others.
+Applications of Facial recognition algorithms are mostly in the domain of security and defence. They include automated passport control at airports, providing a possibility of logging into an account and accessing sensitive data as well as surveillance among others.
 
 ### Problem Statement
 _(approx. 1 paragraph)_
 
 In this section, clearly describe the problem that is to be solved. The problem described should be well defined and should have at least one relevant potential solution. Additionally, describe the problem thoroughly such that it is clear that the problem is quantifiable (the problem can be expressed in mathematical or logical terms) , measurable (the problem can be measured by some metric and clearly observed), and replicable (the problem can be reproduced and occurs more than once).
 
-That problem that is solved by the proposed algorithm is online face recognition. This means that not only known faces may be recognized but also new faces that are added during during runtime of the program. A benchmarking metric for the problem is detection rate of known faces. This could be compared to a state of the art facial classifier (like [https://github.com/rcmalli/keras-vggface]).
+That problem that is solved by the proposed algorithm is online face recognition. This means that not only known faces may be recognized but also new faces that are added during runtime of the program. A benchmarking metric for the problem is detection rate of known faces. This could be compared to a state of the art facial classifier (like [https://github.com/rcmalli/keras-vggface]).
+
+The proposed algorithm calculates the Eucledian distance in between facial feature vectors x_c in the database and the vector x_c calculated upon the current image. The prediction is the one that minimizes the eucldeian distance:
+
+C(x^)=argminc∈S||x^−xc||
+
+This is a 1-nearest neighbour approach.
+
+A match is detected only if the minimal Eucledian distance which is a skalar value is below a certain threashold. This threashold is a fine tuning parameter. 
 
 ### Datasets and Inputs
 _(approx. 2-3 paragraphs)_
